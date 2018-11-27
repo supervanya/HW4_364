@@ -200,8 +200,16 @@ def get_gif_by_id(id):
 
 def get_or_create_gif(title, url):
     """Always returns a Gif instance"""
-    pass # Replace with code
-    # TODO 364: This function should get or create a Gif instance. Determining whether the gif already exists in the database should be based on the gif's title.
+    #364: This function should get or create a Gif instance. Determining whether the gif already exists in the database should be based on the gif's title.
+    
+    g = Gif.query.filter_by(title=title).first()
+    if g:
+        return g
+    else:
+        g = Gif(title = title,embedURL=url)
+        db.session.add(g)
+        db.session.commit()
+
 
 def get_or_create_search_term(term):
     """Always returns a SearchTerm instance"""
