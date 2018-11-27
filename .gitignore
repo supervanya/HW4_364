@@ -2,3 +2,5 @@ __pycache__/*
 .vscode/*
 *.pyc
 giphy_api_key.py
+last_output.json
+playground.py

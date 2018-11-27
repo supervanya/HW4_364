@@ -1,6 +1,6 @@
 api_key = "XLKW2HhwrlIMIi92rPwB1tQgsy9WlUch" # Fill in your API key here.
 
-# TODO 364: To get a Giphy API key to paste here,
+#  364: To get a Giphy API key to paste here,
 # Go to https://developers.giphy.com/
 # Log in if you already have an account, or create an account.
 # It is OK to log in with Facebook, but you can also create an account or even create an account you intend to delete after this assignment that uses a brand new Gmail email, if you prefer to do that.
@@ -10,7 +10,7 @@ api_key = "XLKW2HhwrlIMIi92rPwB1tQgsy9WlUch" # Fill in your API key here.
 # Then click the Create New App button.
 # You should be brought to a new screen, where your API key, a long string of random letters and numbers, will show up. This is all you need -- copy this and paste it into the above quotations! MAKE SURE you follow the rest of the instructions in this file before making any other commits to git.
 
-# TODO 364: Add this file name:
+#  364: Add this file name:
 # giphy_api_key.py
 # to the included .gitignore file.
 # Then save, add, and commit the .gitignore file to YOUR git repository.
