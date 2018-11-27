@@ -101,24 +101,26 @@ class Gif(db.Model):
 # Model to store a personal gif collection
 class PersonalGifCollection(db.Model):
     __tablename__ = "collections"
-    pass
-    # TODO 364: Add code for the PersonalGifCollection model such that it has the following fields:
     # id (Integer, primary key)
+    id  = db.Column(db.Integer,primary_key=True)
     # name (String, up to 255 characters)
+    name = db.Column(db.String(256))
 
+    # TODO 364: 
     # This model should have a one-to-many relationship with the User model (one user, many personal collections of gifs with different names -- say, "Happy Gif Collection" or "Sad Gif Collection")
 
     # This model should also have a many to many relationship with the Gif model (one gif might be in many personal collections, one personal collection could have many gifs in it).
 
 class SearchTerm(db.Model):
-    pass
-    # TODO 364: Add code for the SearchTerm model such that it has the following fields:
     # id (Integer, primary key)
+    id  = db.Column(db.Integer,primary_key=True)
     # term (String, up to 32 characters, unique) -- You want to ensure the database cannot save non-unique search terms
-    # This model should have a many to many relationship with gifs (a search will generate many gifs to save, and one gif could potentially appear in many searches)
+    term = db.Column(db.String(32),unique=True)
 
-    # TODO 364: Define a __repr__ method for this model class that returns the term string
+    # TODO: This model should have a many to many relationship with gifs (a search will generate many gifs to save, and one gif could potentially appear in many searches)
 
+    def __repr__(self):
+        return self.term
 
 ########################
 ######## Forms #########
