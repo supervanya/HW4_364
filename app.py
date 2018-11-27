@@ -47,15 +47,23 @@ login_manager.init_app(app) # set up login manager
 ########################
 
 ## Association tables
-# NOTE - 364: You may want to complete the models tasks below BEFORE returning to build the association tables! That will making doing this much easier.
 
 # NOTE: Remember that setting up association tables in this course always has the same structure! Just make sure you refer to the correct tables and columns!
 
-# TODO 364: Set up association Table between search terms and GIFs (you can call it anything you want, we suggest 'tags' or 'search_gifs').
+# 364: Set up association Table between search terms and GIFs (you can call it anything you want, we suggest 'tags' or 'search_gifs').
+search_gifs = db.Table(
+    'search_gifs',
+    db.Column('gif_id', db.Integer, db.ForeignKey('gifs.id')),
+    db.Column('term_id', db.Integer, db.ForeignKey('searches.id'))
+)
 
+# 364: Set up association Table between GIFs and collections prepared by user (you can call it anything you want. We suggest: user_collection)
+user_collection = db.Table(
+    'user_collection',
+    db.Column('collection_id', db.Integer, db.ForeignKey('collections.id')),
+    db.Column('gif_id', db.Integer, db.ForeignKey('gifs.id'))
+                    )
 
-
-# TODO 364: Set up association Table between GIFs and collections prepared by user (you can call it anything you want. We suggest: user_collection)
 
 
 
@@ -106,18 +114,23 @@ class PersonalGifCollection(db.Model):
     # name (String, up to 255 characters)
     name = db.Column(db.String(256))
 
-    # TODO 364: 
+    # 364: 
     # This model should have a one-to-many relationship with the User model (one user, many personal collections of gifs with different names -- say, "Happy Gif Collection" or "Sad Gif Collection")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # This model should also have a many to many relationship with the Gif model (one gif might be in many personal collections, one personal collection could have many gifs in it).
+    gifs = db.relationship('Gif', secondary=user_collection, backref=db.backref('personal_collection', lazy='dynamic'), lazy='dynamic')
+
 
 class SearchTerm(db.Model):
+    __tablename__ = "searches"
     # id (Integer, primary key)
     id  = db.Column(db.Integer,primary_key=True)
     # term (String, up to 32 characters, unique) -- You want to ensure the database cannot save non-unique search terms
     term = db.Column(db.String(32),unique=True)
 
-    # TODO: This model should have a many to many relationship with gifs (a search will generate many gifs to save, and one gif could potentially appear in many searches)
+    #  This model should have a many to many relationship with gifs (a search will generate many gifs to save, and one gif could potentially appear in many searches)
+    gifs = db.relationship('Gif', secondary=search_gifs, backref=db.backref('search_term', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return self.term
