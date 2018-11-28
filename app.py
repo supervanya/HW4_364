@@ -215,6 +215,19 @@ def get_or_create_gif(title, url):
 def get_or_create_search_term(term):
     """Always returns a SearchTerm instance"""
 
+    #  364: This function should return the search term instance if it already exists.
+
+    # If it does not exist in the database yet, this function should create a new SearchTerm instance.
+
+    # This function should invoke the get_gifs_from_giphy function to get a list of gif data from Giphy.
+
+    # It should iterate over that list acquired from Giphy and invoke get_or_create_gif for each, and then append the return value from get_or_create_gif to the search term's associated gifs (remember, many-to-many relationship between search terms and gifs, allowing you to do this!).
+
+    # If a new search term were created, it should finally be added and committed to the database.
+    # And the SearchTerm instance that was got or created should be returned.
+
+    # HINT: I recommend using print statements as you work through building this function and use it in invocations in view functions to ensure it works as you expect!
+
     # see if the search term already been made
     s = SearchTerm.query.filter_by(term=term).first()
     #if it is
@@ -243,22 +256,28 @@ def get_or_create_search_term(term):
         return s
 
 
-    #  364: This function should return the search term instance if it already exists.
-
-    # If it does not exist in the database yet, this function should create a new SearchTerm instance.
-
-    # This function should invoke the get_gifs_from_giphy function to get a list of gif data from Giphy.
-
-    # It should iterate over that list acquired from Giphy and invoke get_or_create_gif for each, and then append the return value from get_or_create_gif to the search term's associated gifs (remember, many-to-many relationship between search terms and gifs, allowing you to do this!).
-
-    # If a new search term were created, it should finally be added and committed to the database.
-    # And the SearchTerm instance that was got or created should be returned.
-
-    # HINT: I recommend using print statements as you work through building this function and use it in invocations in view functions to ensure it works as you expect!
-
 def get_or_create_collection(name, current_user, gif_list=[]):
     """Always returns a PersonalGifCollection instance"""
     pass # Replace with code
+    col = PersonalGifCollection.query.filter_by(name=name, user_id=current_user.id).first()
+
+    # if col exists:
+    if col:
+        return col
+        # return it
+    # if not:
+    else:
+        # create a new PersonalGifCollection
+        col = PersonalGifCollection(name=name,user_id=current_user.id)
+        # itterate over every gif:
+        for g in gif_list:
+            # append gif to the col.gifs
+            col.gifs.append(g)
+
+        db.session.add(col)
+        db.session.commit()
+        return col
+
 
     # TODO 364: This function should get or create a personal gif collection. Uniqueness of the gif collection should be determined by the name of the collection and the id of the logged in user.
 
