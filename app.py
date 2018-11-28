@@ -344,7 +344,7 @@ def secret():
 ## Other routes
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # TODO 364: Edit this view function, which has a provided return statement, so that the GifSearchForm can be rendered.
+    # 364: Edit this view function, which has a provided return statement, so that the GifSearchForm can be rendered.
     form = GifSearchForm()
 
     # If the form is submitted successfully:
@@ -385,15 +385,31 @@ def create_collection():
     gifs = Gif.query.all()
     choices = [(g.id, g.title) for g in gifs]
     form.gif_picks.choices = choices
-    # TODO 364: If the form validates on submit, get the list of the gif ids that were selected from the form. Use the get_gif_by_id function to create a list of Gif objects.  Then, use the information available to you at this point in the function (e.g. the list of gif objects, the current_user) to invoke the get_or_create_collection function, and redirect to the page that shows a list of all your collections.
+
+    if request.method == 'POST':
+        name      = form.name.data
+        gif_picks = form.gif_picks.data
+        gif_list = []
+        for gif_id in gif_picks:
+            g = get_gif_by_id(gif_id)
+            gif_list.append(g)
+        
+        get_or_create_collection(name=name, current_user=current_user, gif_list= gif_list)
+
+        return redirect(url_for('collections'))
+    else:
+        return render_template('create_collection.html', form = form)
+    # 364: If the form validates on submit, get the list of the gif ids that were selected from the form. Use the get_gif_by_id function to create a list of Gif objects.  Then, use the information available to you at this point in the function (e.g. the list of gif objects, the current_user) to invoke the get_or_create_collection function, and redirect to the page that shows a list of all your collections.
     # If the form is not validated, this view function should simply render the create_collection.html template and send the form to the template.
 
 
 @app.route('/collections',methods=["GET","POST"])
 @login_required
 def collections():
-    pass # Replace with code
-    # TODO 364: This view function should render the collections.html template so that only the current user's personal gif collection links will render in that template. Make sure to examine the template so that you send it the correct data!
+    collections = PersonalGifCollection.query.filter_by(user_id = current_user.id).all()
+    return render_template("collections.html", collections = collections)
+
+    # 364: This view function should render the collections.html template so that only the current user's personal gif collection links will render in that template. Make sure to examine the template so that you send it the correct data!
 
 # Provided
 @app.route('/collection/<id_num>')
