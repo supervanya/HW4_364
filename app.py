@@ -180,9 +180,9 @@ class CollectionCreateForm(FlaskForm):
 def get_gifs_from_giphy(search_string):
     """ Returns data from Giphy API with up to 5 gifs corresponding to the search input"""
     baseurl = "https://api.giphy.com/v1/gifs/search"
-    params  = { api_key: api_key,
-                q: search_string,
-                limit: 5
+    params  = { 'api_key': api_key,
+                'q': search_string,
+                'limit': 5
     }
     
     response = requests.get(baseurl, params = params).json()
@@ -201,7 +201,7 @@ def get_gif_by_id(id):
 def get_or_create_gif(title, url):
     """Always returns a Gif instance"""
     #364: This function should get or create a Gif instance. Determining whether the gif already exists in the database should be based on the gif's title.
-    
+
     g = Gif.query.filter_by(title=title).first()
     if g:
         return g
@@ -209,11 +209,41 @@ def get_or_create_gif(title, url):
         g = Gif(title = title,embedURL=url)
         db.session.add(g)
         db.session.commit()
+        return g
 
 
 def get_or_create_search_term(term):
     """Always returns a SearchTerm instance"""
-    # TODO 364: This function should return the search term instance if it already exists.
+
+    # see if the search term already been made
+    s = SearchTerm.query.filter_by(term=term).first()
+    #if it is
+    if s:
+        # return it
+        return s
+    #if not -- do this:
+    else:
+        # create a new SearchTerm(term=term)
+        s = SearchTerm(term=term)
+        # request Gifs using this term
+        gifs = get_gifs_from_giphy(term)
+        # itterate over the list:
+        for g_dict in gifs:
+            # extract the needed title and url from g_dict
+            title = g_dict['title']
+            url   = g_dict['embed_url']
+            # create a new gif get_or_create_gif
+            g = get_or_create_gif(title, url)
+            # append it to the searchterm
+            s.gifs.append(g)
+        # add + commit to the db
+        db.session.add(s)
+        db.session.commit()
+        # return the SearchTerm
+        return s
+
+
+    #  364: This function should return the search term instance if it already exists.
 
     # If it does not exist in the database yet, this function should create a new SearchTerm instance.
 
